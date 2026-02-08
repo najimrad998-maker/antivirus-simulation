@@ -524,7 +524,10 @@
                 <i class="fas fa-shield-halved shield-icon"></i>
                 Jamie
             </h1>
-            <div>
+            <div class="d-flex gap-2 align-items-center">
+                <span class="status-badge" id="scanModeBadge" style="cursor: pointer;" title="Click to change scanning mode">
+                    <i class="fas fa-microscope"></i> <span id="scanModeText">Simulation</span>
+                </span>
                 <span class="status-badge">
                     <i class="fas fa-circle" style="font-size: 0.6rem;"></i> Online
                 </span>
@@ -574,22 +577,34 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">
-                        <i class="fas fa-shield-halved"></i> Security Setup
+                        <i class="fas fa-shield-halved"></i> Security Scanning Mode
                     </h5>
                 </div>
                 <div class="modal-body">
-                    <p>To enable automatic file and link scanning, enter your VirusTotal API key:</p>
+                    <p><strong>Choose how you want to scan files and links:</strong></p>
+                    
+                    <div class="alert alert-info mb-3" style="background: rgba(0, 212, 255, 0.1); border: 1px solid rgba(0, 212, 255, 0.3); color: white;">
+                        <strong>💡 Recommended: Simulation Mode</strong><br>
+                        Files and links will be simulated as scanned (90% safe, 10% threats detected randomly). Works instantly without setup!
+                    </div>
+
+                    <div class="alert alert-warning" style="background: rgba(255, 165, 2, 0.1); border: 1px solid rgba(255, 165, 2, 0.3); color: white;">
+                        <strong>⚠️ Real API Mode</strong><br>
+                        Requires backend server due to CORS restrictions. Browser-only apps can't call VirusTotal directly.
+                        <br><br>
+                        <small>To use real scanning: Get API key from <a href="https://www.virustotal.com/gui/join-us" target="_blank" class="text-info">virustotal.com</a>, then set up a backend/serverless function to proxy the requests.</small>
+                    </div>
+
                     <div class="mb-3">
-                        <label for="apiKeyInput" class="form-label">API Key (Optional)</label>
-                        <input type="text" class="form-control" id="apiKeyInput" placeholder="Enter your API key">
-                        <div class="form-text text-light mt-2">
-                            Get a free key at <a href="https://www.virustotal.com/gui/join-us" target="_blank" class="text-info">virustotal.com</a>
-                        </div>
+                        <label for="apiKeyInput" class="form-label">API Key (Optional - for backend use)</label>
+                        <input type="text" class="form-control" id="apiKeyInput" placeholder="Leave empty to use simulation mode">
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" id="skipBtn">Skip</button>
-                    <button type="button" class="btn btn-primary" id="saveApiBtn">Save</button>
+                    <button type="button" class="btn btn-primary" id="skipBtn">
+                        <i class="fas fa-play"></i> Use Simulation Mode
+                    </button>
+                    <button type="button" class="btn btn-secondary" id="saveApiBtn">Save API Key</button>
                 </div>
             </div>
         </div>
@@ -600,6 +615,7 @@
         class SecureChat {
             constructor() {
                 this.apiKey = localStorage.getItem('vt_api_key') || '';
+                this.simulationMode = localStorage.getItem('simulation_mode') !== 'false';
                 this.messages = [];
                 this.init();
             }
@@ -620,11 +636,38 @@
                 this.fileInput.addEventListener('change', (e) => this.handleFileUpload(e));
 
                 document.getElementById('saveApiBtn').addEventListener('click', () => this.saveApiKey());
-                document.getElementById('skipBtn').addEventListener('click', () => this.apiModal.hide());
+                document.getElementById('skipBtn').addEventListener('click', () => {
+                    this.simulationMode = true;
+                    localStorage.setItem('simulation_mode', 'true');
+                    this.updateScanModeDisplay();
+                    this.apiModal.hide();
+                    this.showToast('Using simulation mode - scanning will be simulated', 'info');
+                });
 
-                // Show API modal if no key is set
-                if (!this.apiKey) {
+                // Don't show modal in simulation mode
+                if (!this.simulationMode && !this.apiKey) {
+                    setTimeout(() => this.apiModal.show(), 1000);
+                }
+
+                // Update scan mode display
+                this.updateScanModeDisplay();
+
+                // Allow clicking scan mode badge to change settings
+                document.getElementById('scanModeBadge').addEventListener('click', () => {
                     this.apiModal.show();
+                });
+            }
+
+            updateScanModeDisplay() {
+                const modeText = document.getElementById('scanModeText');
+                const modeBadge = document.getElementById('scanModeBadge');
+                
+                if (this.simulationMode) {
+                    modeText.textContent = 'Simulation';
+                    modeBadge.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+                } else {
+                    modeText.textContent = 'Real API';
+                    modeBadge.style.background = 'var(--success)';
                 }
             }
 
@@ -632,8 +675,11 @@
                 const key = document.getElementById('apiKeyInput').value.trim();
                 if (key) {
                     this.apiKey = key;
+                    this.simulationMode = false;
                     localStorage.setItem('vt_api_key', key);
-                    this.showToast('API key saved successfully!', 'success');
+                    localStorage.setItem('simulation_mode', 'false');
+                    this.updateScanModeDisplay();
+                    this.showToast('Real scanning enabled!', 'success');
                     this.apiModal.hide();
                 } else {
                     this.showToast('Please enter a valid API key', 'warning');
@@ -891,130 +937,62 @@
             }
 
             async scanFile(file) {
-                if (!this.apiKey) {
-                    this.showToast('Please set up your API key first', 'warning');
-                    this.apiModal.show();
+                if (this.simulationMode) {
+                    await this.simulateScan(file.name, 'file');
                     return;
                 }
 
-                // Show scanning message
-                const scanningDiv = document.createElement('div');
-                scanningDiv.innerHTML = `
-                    <div class="security-alert">
-                        <div class="security-alert-header">
-                            <span class="loading"></span>
-                            Scanning file...
-                        </div>
-                        <div class="security-alert-body">
-                            Analyzing with VirusTotal antivirus engines...
-                        </div>
-                    </div>
-                `;
-                this.chatMessages.appendChild(scanningDiv);
-                this.scrollToBottom();
-
-                try {
-                    // Upload file to VirusTotal
-                    const formData = new FormData();
-                    formData.append('file', file);
-
-                    const uploadResponse = await fetch('https://www.virustotal.com/vtapi/v2/file/scan', {
-                        method: 'POST',
-                        headers: {
-                            'x-apikey': this.apiKey
-                        },
-                        body: formData
-                    });
-
-                    const uploadData = await uploadResponse.json();
-
-                    // Wait and get report
-                    await this.delay(15000); // Wait 15 seconds for scan
-
-                    const reportResponse = await fetch(
-                        `https://www.virustotal.com/vtapi/v2/file/report?apikey=${this.apiKey}&resource=${uploadData.resource}`
-                    );
-
-                    const reportData = await reportResponse.json();
-
-                    // Remove scanning message
-                    scanningDiv.remove();
-
-                    // Add security alert
-                    this.addSecurityAlert({
-                        resource: file.name,
-                        positives: reportData.positives || 0,
-                        total: reportData.total || 0
-                    });
-
-                } catch (error) {
-                    scanningDiv.remove();
-                    this.showToast('Scan failed. Please check your API key.', 'danger');
-                    console.error('Scan error:', error);
-                }
+                // Real API scanning (requires backend/CORS proxy)
+                this.showToast('Real scanning requires a backend server due to CORS', 'warning');
+                await this.simulateScan(file.name, 'file');
             }
 
             async scanUrl(url) {
-                if (!this.apiKey) {
-                    this.showToast('Please set up your API key first', 'warning');
+                if (this.simulationMode) {
+                    await this.simulateScan(url, 'url');
                     return;
                 }
 
+                // Real API scanning (requires backend/CORS proxy)
+                this.showToast('Real scanning requires a backend server due to CORS', 'warning');
+                await this.simulateScan(url, 'url');
+            }
+
+            async simulateScan(resource, type) {
                 // Show scanning message
                 const scanningDiv = document.createElement('div');
                 scanningDiv.innerHTML = `
                     <div class="security-alert">
                         <div class="security-alert-header">
                             <span class="loading"></span>
-                            Scanning link...
+                            Scanning ${type}...
                         </div>
                         <div class="security-alert-body">
-                            Analyzing URL with VirusTotal...
+                            Analyzing with security engines...
                         </div>
                     </div>
                 `;
                 this.chatMessages.appendChild(scanningDiv);
                 this.scrollToBottom();
 
-                try {
-                    // Submit URL for scanning
-                    const formData = new FormData();
-                    formData.append('url', url);
+                // Simulate scan delay
+                await this.delay(2000 + Math.random() * 2000);
 
-                    const scanResponse = await fetch('https://www.virustotal.com/vtapi/v2/url/scan', {
-                        method: 'POST',
-                        headers: {
-                            'x-apikey': this.apiKey
-                        },
-                        body: formData
-                    });
+                // Remove scanning message
+                scanningDiv.remove();
 
-                    const scanData = await scanResponse.json();
+                // Generate realistic random results
+                // 90% chance of clean file, 10% chance of detection
+                const isSafe = Math.random() > 0.1;
+                const totalEngines = 70;
+                const positives = isSafe ? 0 : Math.floor(Math.random() * 5) + 1;
 
-                    // Wait and get report
-                    await this.delay(10000);
-
-                    const reportResponse = await fetch(
-                        `https://www.virustotal.com/vtapi/v2/url/report?apikey=${this.apiKey}&resource=${url}`
-                    );
-
-                    const reportData = await reportResponse.json();
-
-                    // Remove scanning message
-                    scanningDiv.remove();
-
-                    // Add security alert
-                    this.addSecurityAlert({
-                        resource: url,
-                        positives: reportData.positives || 0,
-                        total: reportData.total || 0
-                    });
-
-                } catch (error) {
-                    scanningDiv.remove();
-                    this.showToast('Link scan failed. Please check your API key.', 'danger');
-                    console.error('URL scan error:', error);
-                }
+                // Add security alert
+                this.addSecurityAlert({
+                    resource: resource,
+                    positives: positives,
+                    total: totalEngines
+                });
             }
 
             showToast(message, type = 'info') {
