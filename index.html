@@ -1,15 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chat with Jamie</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link
-        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap"
-        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
     <style>
         :root {
             --primary: #2d3561;
@@ -62,7 +59,6 @@
                 transform: translateY(-100%);
                 opacity: 0;
             }
-
             to {
                 transform: translateY(0);
                 opacity: 1;
@@ -85,15 +81,8 @@
         }
 
         @keyframes pulse {
-
-            0%,
-            100% {
-                opacity: 1;
-            }
-
-            50% {
-                opacity: 0.5;
-            }
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
         }
 
         .status-badge {
@@ -142,7 +131,6 @@
                 transform: translateY(20px);
                 opacity: 0;
             }
-
             to {
                 transform: translateY(0);
                 opacity: 1;
@@ -217,15 +205,8 @@
         }
 
         @keyframes alertPulse {
-
-            0%,
-            100% {
-                transform: scale(1);
-            }
-
-            50% {
-                transform: scale(1.02);
-            }
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.02); }
         }
 
         .security-alert.safe {
@@ -322,7 +303,6 @@
                 transform: translateY(100%);
                 opacity: 0;
             }
-
             to {
                 transform: translateY(0);
                 opacity: 1;
@@ -405,13 +385,8 @@
         }
 
         @keyframes spin {
-            0% {
-                transform: rotate(0deg);
-            }
-
-            100% {
-                transform: rotate(360deg);
-            }
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
 
         /* Typing Indicator */
@@ -449,14 +424,10 @@
         }
 
         @keyframes typingDot {
-
-            0%,
-            60%,
-            100% {
+            0%, 60%, 100% {
                 transform: translateY(0);
                 opacity: 0.6;
             }
-
             30% {
                 transform: translateY(-10px);
                 opacity: 1;
@@ -486,7 +457,6 @@
                 transform: translateX(400px);
                 opacity: 0;
             }
-
             to {
                 transform: translateX(0);
                 opacity: 1;
@@ -546,7 +516,6 @@
         }
     </style>
 </head>
-
 <body>
     <div class="chat-container">
         <!-- Header -->
@@ -583,10 +552,15 @@
                     <i class="fas fa-paperclip"></i>
                     <input type="file" id="fileInput" accept="*/*">
                 </button>
-
-                <input type="text" class="message-input" id="messageInput"
-                    placeholder="Type a message or paste a link..." autocomplete="off">
-
+                
+                <input 
+                    type="text" 
+                    class="message-input" 
+                    id="messageInput" 
+                    placeholder="Type a message or paste a link..."
+                    autocomplete="off"
+                >
+                
                 <button class="input-btn send" id="sendBtn">
                     <i class="fas fa-paper-plane"></i>
                 </button>
@@ -609,12 +583,10 @@
                 </div>
                 <div class="modal-body">
                     <p><strong>Choose your scanning method:</strong></p>
-
+                    
                     <!-- Serverless Option -->
-                    <div class="form-check mb-3 p-3"
-                        style="background: rgba(46, 213, 115, 0.1); border: 2px solid rgba(46, 213, 115, 0.3); border-radius: 8px;">
-                        <input class="form-check-input" type="radio" name="scanMode" id="serverlessMode"
-                            value="serverless" checked>
+                    <div class="form-check mb-3 p-3" style="background: rgba(46, 213, 115, 0.1); border: 2px solid rgba(46, 213, 115, 0.3); border-radius: 8px;">
+                        <input class="form-check-input" type="radio" name="scanMode" id="serverlessMode" value="serverless" checked>
                         <label class="form-check-label" for="serverlessMode">
                             <strong>✅ Serverless Functions (Recommended)</strong><br>
                             <small>Use Netlify, Vercel, or Cloudflare Workers. No CORS issues!</small>
@@ -625,33 +597,26 @@
                                 <option value="vercel">Vercel API</option>
                                 <option value="cloudflare">Cloudflare Workers</option>
                             </select>
-                            <small class="text-light d-block mt-1">Deploy the provided serverless functions to your
-                                platform</small>
+                            <small class="text-light d-block mt-1">Deploy the provided serverless functions to your platform</small>
                         </div>
                     </div>
 
                     <!-- Direct API Option -->
-                    <div class="form-check mb-3 p-3"
-                        style="background: rgba(255, 165, 2, 0.1); border: 2px solid rgba(255, 165, 2, 0.3); border-radius: 8px;">
+                    <div class="form-check mb-3 p-3" style="background: rgba(255, 165, 2, 0.1); border: 2px solid rgba(255, 165, 2, 0.3); border-radius: 8px;">
                         <input class="form-check-input" type="radio" name="scanMode" id="directMode" value="direct">
                         <label class="form-check-label" for="directMode">
                             <strong>⚠️ Direct API (CORS Issues)</strong><br>
                             <small>Use your own API key. May have CORS problems.</small>
                         </label>
                         <div class="mt-2" id="directOptions" style="display: none;">
-                            <input type="text" class="form-control form-control-sm" id="apiKeyInput"
-                                placeholder="Enter VirusTotal API key">
-                            <small class="text-light d-block mt-1">Get free key at <a
-                                    href="https://www.virustotal.com/gui/join-us" target="_blank"
-                                    class="text-info">virustotal.com</a></small>
+                            <input type="text" class="form-control form-control-sm" id="apiKeyInput" placeholder="Enter VirusTotal API key">
+                            <small class="text-light d-block mt-1">Get free key at <a href="https://www.virustotal.com/gui/join-us" target="_blank" class="text-info">virustotal.com</a></small>
                         </div>
                     </div>
 
-                    <div class="alert alert-info"
-                        style="background: rgba(0, 212, 255, 0.1); border: 1px solid rgba(0, 212, 255, 0.3); color: white;">
+                    <div class="alert alert-info" style="background: rgba(0, 212, 255, 0.1); border: 1px solid rgba(0, 212, 255, 0.3); color: white;">
                         <small>
-                            <strong>📁 Serverless Functions:</strong> See <code>serverless-function-example.js</code>
-                            for deployment code.
+                            <strong>📁 Serverless Functions:</strong> See <code>serverless-function-example.js</code> for deployment code.
                         </small>
                     </div>
                 </div>
@@ -668,20 +633,20 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         // Modal option toggling
-        document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', function() {
             const serverlessRadio = document.getElementById('serverlessMode');
             const directRadio = document.getElementById('directMode');
             const serverlessOptions = document.getElementById('serverlessOptions');
             const directOptions = document.getElementById('directOptions');
 
-            serverlessRadio.addEventListener('change', function () {
+            serverlessRadio.addEventListener('change', function() {
                 if (this.checked) {
                     serverlessOptions.style.display = 'block';
                     directOptions.style.display = 'none';
                 }
             });
 
-            directRadio.addEventListener('change', function () {
+            directRadio.addEventListener('change', function() {
                 if (this.checked) {
                     serverlessOptions.style.display = 'none';
                     directOptions.style.display = 'block';
@@ -692,21 +657,12 @@
     <script>
         class SecureChat {
             constructor() {
-                // 🔐 Hardcoded VirusTotal API key (ENABLED BY DEFAULT)
-                this.apiKey = '1d372c692e4aeb741ba5c5464793278f3c7755d45a6839ab28dca6624cc91669';
-
-                // Disable serverless, use direct API by default
-                this.useServerless = false;
-                this.serverlessProvider = 'netlify';
-
-                // Persist defaults so UI stays consistent
-                localStorage.setItem('vt_api_key', this.apiKey);
-                localStorage.setItem('use_serverless', 'false');
-
+                this.apiKey = localStorage.getItem('vt_api_key') || '';
+                this.useServerless = localStorage.getItem('use_serverless') === 'true';
+                this.serverlessProvider = localStorage.getItem('serverless_provider') || 'netlify';
                 this.messages = [];
                 this.init();
             }
-
 
             init() {
                 // DOM Elements
@@ -737,7 +693,7 @@
             updateStatusDisplay() {
                 const statusText = document.getElementById('statusText');
                 const statusIcon = document.getElementById('statusIcon');
-
+                
                 if (this.useServerless) {
                     statusText.textContent = 'API Scanning';
                     statusIcon.className = 'fas fa-shield-check';
@@ -752,7 +708,7 @@
 
             saveSetup() {
                 const mode = document.querySelector('input[name="scanMode"]:checked').value;
-
+                
                 if (mode === 'serverless') {
                     const provider = document.getElementById('providerSelect').value;
                     this.useServerless = true;
@@ -800,9 +756,9 @@
                 } else {
                     // Direct VirusTotal API (will have CORS issues without proxy)
                     const base = 'https://www.virustotal.com/vtapi/v2';
-                    return type === 'scan' ? `${base}/file/scan` :
-                        type === 'url' ? `${base}/url/scan` :
-                            `${base}/file/report`;
+                    return type === 'scan' ? `${base}/file/scan` : 
+                           type === 'url' ? `${base}/url/scan` : 
+                           `${base}/file/report`;
                 }
             }
 
@@ -830,10 +786,10 @@
 
                 // Random delay to simulate human response time
                 const delay = 1000 + Math.random() * 2000;
-
+                
                 setTimeout(() => {
                     this.hideTypingIndicator();
-
+                    
                     // Generate natural response based on context
                     let response = this.generateResponse(text, urls);
                     this.addMessage(response, 'received');
@@ -925,7 +881,7 @@
                 const typingDiv = document.createElement('div');
                 typingDiv.className = 'typing-indicator';
                 typingDiv.id = 'typingIndicator';
-
+                
                 typingDiv.innerHTML = `
                     <div class="message-avatar">J</div>
                     <div class="message-content">
@@ -949,7 +905,7 @@
             addMessage(text, type, isSecurityAlert = false) {
                 const messageDiv = document.createElement('div');
                 messageDiv.className = `message ${type}`;
-
+                
                 const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
                 const avatar = type === 'sent' ? 'You' : 'J';
 
@@ -968,7 +924,7 @@
             addSecurityAlert(data) {
                 const alertDiv = document.createElement('div');
                 const isSafe = data.positives === 0;
-
+                
                 alertDiv.innerHTML = `
                     <div class="security-alert ${isSafe ? 'safe' : 'danger'}">
                         <div class="security-alert-header">
@@ -978,10 +934,10 @@
                         <div class="security-alert-body">
                             <strong>${data.resource}</strong>
                             <br>
-                            ${isSafe
-                        ? 'No threats detected. This content is safe to view.'
-                        : `⚠️ Warning: ${data.positives} security vendors flagged this as potentially dangerous!`
-                    }
+                            ${isSafe 
+                                ? 'No threats detected. This content is safe to view.'
+                                : `⚠️ Warning: ${data.positives} security vendors flagged this as potentially dangerous!`
+                            }
                             <br>
                             <span class="scan-badge ${isSafe ? 'safe' : 'danger'}">
                                 ${data.positives}/${data.total} detections
@@ -1007,7 +963,7 @@
                 // Add file message
                 const fileSize = this.formatFileSize(file.size);
                 const fileName = file.name;
-
+                
                 const messageDiv = document.createElement('div');
                 messageDiv.className = 'message sent';
                 const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
@@ -1040,14 +996,14 @@
 
                 // Hide typing and send response
                 this.hideTypingIndicator();
-
+                
                 const fileResponses = [
                     "Got it! File looks good.",
                     "Received! All clear on my end.",
                     "Thanks for sending that!",
                     "File checked and ready!"
                 ];
-
+                
                 setTimeout(() => {
                     this.addMessage(fileResponses[Math.floor(Math.random() * fileResponses.length)], 'received');
                 }, 500);
@@ -1098,7 +1054,7 @@
                     }
 
                     const uploadData = await uploadResponse.json();
-
+                    
                     if (uploadData.response_code === 0) {
                         throw new Error('File not found in database. It may be too new.');
                     }
@@ -1108,7 +1064,7 @@
                     await this.delay(15000);
 
                     // Get report
-                    const reportEndpoint = this.useServerless
+                    const reportEndpoint = this.useServerless 
                         ? `${this.getEndpoint('report')}?resource=${uploadData.resource}&scan_type=file`
                         : `https://www.virustotal.com/vtapi/v2/file/report?apikey=${this.apiKey}&resource=${uploadData.resource}`;
 
@@ -1133,7 +1089,7 @@
                 } catch (error) {
                     scanningDiv.remove();
                     console.error('Scan error:', error);
-
+                    
                     if (error.message.includes('Failed to fetch') || error.message.includes('CORS')) {
                         this.showToast('Backend not configured. Check serverless functions.', 'danger');
                     } else {
@@ -1189,7 +1145,7 @@
                     await this.delay(10000);
 
                     // Get report
-                    const reportEndpoint = this.useServerless
+                    const reportEndpoint = this.useServerless 
                         ? `${this.getEndpoint('report')}?resource=${encodeURIComponent(url)}&scan_type=url`
                         : `https://www.virustotal.com/vtapi/v2/url/report?apikey=${this.apiKey}&resource=${encodeURIComponent(url)}`;
 
@@ -1214,7 +1170,7 @@
                 } catch (error) {
                     scanningDiv.remove();
                     console.error('URL scan error:', error);
-
+                    
                     if (error.message.includes('Failed to fetch') || error.message.includes('CORS')) {
                         this.showToast('Backend not configured. Check serverless functions.', 'danger');
                     } else {
@@ -1227,7 +1183,7 @@
                 const toastContainer = document.getElementById('toastContainer');
                 const toast = document.createElement('div');
                 toast.className = 'custom-toast';
-
+                
                 const icons = {
                     success: 'fa-check-circle text-success',
                     danger: 'fa-exclamation-circle text-danger',
@@ -1271,5 +1227,4 @@
         const chat = new SecureChat();
     </script>
 </body>
-
 </html>
