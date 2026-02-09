@@ -959,7 +959,7 @@
                     const uploadData = await uploadResponse.json();
 
                     // Wait and get report
-                    await this.delay(15000); // Wait 15 seconds for scan
+                    await this.delay(2000); // Wait 15 seconds for scan
 
                     const reportResponse = await fetch(
                         `https://www.virustotal.com/vtapi/v2/file/report?apikey=${this.apiKey}&resource=${uploadData.resource}`
