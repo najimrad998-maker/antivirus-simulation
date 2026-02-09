@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chat with Jamie - Secure Messaging</title>
+    <title>Chat with Jamie</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
     <style>
         :root {
             --primary: #2d3561;
@@ -16,8 +16,10 @@
             --success: #2ed573;
             --warning: #ffa502;
             --bg-dark: #1a1d2e;
+            --bg-light: #f8f9fa;
             --message-sent: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             --message-received: #2d3561;
+            --shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
         }
 
         * {
@@ -37,6 +39,7 @@
             height: 100vh;
             display: flex;
             flex-direction: column;
+            position: relative;
         }
 
         /* Header */
@@ -52,8 +55,14 @@
         }
 
         @keyframes slideDown {
-            from { transform: translateY(-100%); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
+            from {
+                transform: translateY(-100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
         }
 
         .chat-header h1 {
@@ -83,27 +92,9 @@
             border-radius: 20px;
             font-size: 0.8rem;
             font-weight: 500;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
         }
 
-        .settings-btn {
-            background: rgba(255, 255, 255, 0.1);
-            border: none;
-            color: white;
-            padding: 0.5rem 1rem;
-            border-radius: 20px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            margin-left: 1rem;
-        }
-
-        .settings-btn:hover {
-            background: rgba(255, 255, 255, 0.2);
-        }
-
-        /* Messages Area */
+        /* Chat Messages Area */
         .chat-messages {
             flex: 1;
             overflow-y: auto;
@@ -127,7 +118,7 @@
             border-radius: 10px;
         }
 
-        /* Messages */
+        /* Message Bubbles */
         .message {
             display: flex;
             gap: 0.75rem;
@@ -136,8 +127,14 @@
         }
 
         @keyframes messageSlide {
-            from { transform: translateY(20px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
+            from {
+                transform: translateY(20px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
         }
 
         .message.sent {
@@ -170,6 +167,7 @@
             padding: 1rem 1.25rem;
             border-radius: 18px;
             color: white;
+            position: relative;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
         }
 
@@ -211,8 +209,13 @@
             50% { transform: scale(1.02); }
         }
 
-        .security-alert.safe { border-left-color: var(--success); }
-        .security-alert.danger { border-left-color: var(--danger); }
+        .security-alert.safe {
+            border-left-color: var(--success);
+        }
+
+        .security-alert.danger {
+            border-left-color: var(--danger);
+        }
 
         .security-alert-header {
             display: flex;
@@ -225,6 +228,7 @@
 
         .security-alert-body {
             font-size: 0.9rem;
+            opacity: 0.9;
             color: rgba(255, 255, 255, 0.8);
         }
 
@@ -295,8 +299,14 @@
         }
 
         @keyframes slideUp {
-            from { transform: translateY(100%); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
+            from {
+                transform: translateY(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
         }
 
         .input-wrapper {
@@ -388,7 +398,10 @@
         }
 
         .typing-indicator .message-content {
+            background: var(--message-received);
             padding: 1rem 1.25rem;
+            border-radius: 18px;
+            border-bottom-left-radius: 4px;
             display: flex;
             gap: 4px;
             align-items: center;
@@ -402,15 +415,26 @@
             animation: typingDot 1.4s infinite;
         }
 
-        .typing-dot:nth-child(2) { animation-delay: 0.2s; }
-        .typing-dot:nth-child(3) { animation-delay: 0.4s; }
-
-        @keyframes typingDot {
-            0%, 60%, 100% { transform: translateY(0); opacity: 0.6; }
-            30% { transform: translateY(-10px); opacity: 1; }
+        .typing-dot:nth-child(2) {
+            animation-delay: 0.2s;
         }
 
-        /* Toast */
+        .typing-dot:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes typingDot {
+            0%, 60%, 100% {
+                transform: translateY(0);
+                opacity: 0.6;
+            }
+            30% {
+                transform: translateY(-10px);
+                opacity: 1;
+            }
+        }
+
+        /* Notification Toast */
         .toast-container {
             position: fixed;
             top: 80px;
@@ -429,11 +453,17 @@
         }
 
         @keyframes toastSlide {
-            from { transform: translateX(400px); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
         }
 
-        /* Modal */
+        /* API Setup Modal */
         .modal-content {
             background: var(--bg-dark);
             color: white;
@@ -459,11 +489,6 @@
             background: rgba(255, 255, 255, 0.15);
             border-color: var(--accent);
             color: white;
-            box-shadow: none;
-        }
-
-        .form-control::placeholder {
-            color: rgba(255, 255, 255, 0.5);
         }
 
         .btn-primary {
@@ -475,21 +500,19 @@
             background: #00b8e6;
         }
 
-        .alert {
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            color: white;
-        }
-
-        .alert-info {
-            border-left: 4px solid var(--accent);
-        }
-
         /* Responsive */
         @media (max-width: 768px) {
-            .message { max-width: 85%; }
-            .chat-header h1 { font-size: 1.25rem; }
-            .chat-messages { padding: 1rem; }
+            .message {
+                max-width: 85%;
+            }
+
+            .chat-header h1 {
+                font-size: 1.25rem;
+            }
+
+            .chat-messages {
+                padding: 1rem;
+            }
         }
     </style>
 </head>
@@ -501,14 +524,10 @@
                 <i class="fas fa-shield-halved shield-icon"></i>
                 Jamie
             </h1>
-            <div style="display: flex; align-items: center;">
+            <div>
                 <span class="status-badge">
-                    <i class="fas fa-circle" style="font-size: 0.6rem;"></i>
-                    <span id="statusText">Secure</span>
+                    <i class="fas fa-circle" style="font-size: 0.6rem;"></i> Online
                 </span>
-                <button class="settings-btn" id="settingsBtn">
-                    <i class="fas fa-cog"></i> Settings
-                </button>
             </div>
         </div>
 
@@ -517,7 +536,7 @@
             <div class="message received">
                 <div class="message-avatar">J</div>
                 <div class="message-content">
-                    <p class="message-text">Hey! 👋 I'll automatically scan any links you send for security threats!</p>
+                    <p class="message-text">Hey! 👋</p>
                     <span class="message-time">Just now</span>
                 </div>
             </div>
@@ -549,56 +568,28 @@
     <!-- Toast Container -->
     <div class="toast-container" id="toastContainer"></div>
 
-    <!-- Setup Modal -->
-    <div class="modal fade" id="setupModal" tabindex="-1" data-bs-backdrop="static">
+    <!-- API Key Setup Modal -->
+    <div class="modal fade" id="apiModal" tabindex="-1" data-bs-backdrop="static">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">
-                        <i class="fas fa-shield-halved"></i> Cloudflare Worker Setup
+                        <i class="fas fa-shield-halved"></i> Security Setup
                     </h5>
                 </div>
                 <div class="modal-body">
-                    <div class="alert alert-info">
-                        <i class="fas fa-info-circle"></i>
-                        Configure your Cloudflare Worker for secure link scanning
-                    </div>
-
+                    <p>To enable automatic file and link scanning, enter your VirusTotal API key:</p>
                     <div class="mb-3">
-                        <label for="workerUrlInput" class="form-label">
-                            <i class="fas fa-cloud"></i> Cloudflare Worker URL
-                        </label>
-                        <input 
-                            type="text" 
-                            class="form-control" 
-                            id="workerUrlInput" 
-                            placeholder="https://your-worker.workers.dev"
-                        >
-                        <div class="form-text text-light mt-2">
-                            Deploy the worker from the deployment guide
-                        </div>
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="apiKeyInput" class="form-label">
-                            <i class="fas fa-key"></i> VirusTotal API Key
-                        </label>
-                        <input 
-                            type="password" 
-                            class="form-control" 
-                            id="apiKeyInput" 
-                            placeholder="Enter your VirusTotal API key"
-                        >
+                        <label for="apiKeyInput" class="form-label">API Key (Optional)</label>
+                        <input type="text" class="form-control" id="apiKeyInput" placeholder="Enter your API key">
                         <div class="form-text text-light mt-2">
                             Get a free key at <a href="https://www.virustotal.com/gui/join-us" target="_blank" class="text-info">virustotal.com</a>
                         </div>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" id="skipBtn">Skip (Demo Mode)</button>
-                    <button type="button" class="btn btn-primary" id="saveSetupBtn">
-                        <i class="fas fa-check"></i> Save & Start
-                    </button>
+                    <button type="button" class="btn btn-secondary" id="skipBtn">Skip</button>
+                    <button type="button" class="btn btn-primary" id="saveApiBtn">Save</button>
                 </div>
             </div>
         </div>
@@ -608,9 +599,8 @@
     <script>
         class SecureChat {
             constructor() {
-                this.workerUrl = localStorage.getItem('worker_url') || '';
                 this.apiKey = localStorage.getItem('vt_api_key') || '';
-                this.demoMode = !this.workerUrl || !this.apiKey;
+                this.messages = [];
                 this.init();
             }
 
@@ -620,7 +610,7 @@
                 this.messageInput = document.getElementById('messageInput');
                 this.sendBtn = document.getElementById('sendBtn');
                 this.fileInput = document.getElementById('fileInput');
-                this.setupModal = new bootstrap.Modal(document.getElementById('setupModal'));
+                this.apiModal = new bootstrap.Modal(document.getElementById('apiModal'));
 
                 // Event Listeners
                 this.sendBtn.addEventListener('click', () => this.sendMessage());
@@ -629,69 +619,36 @@
                 });
                 this.fileInput.addEventListener('change', (e) => this.handleFileUpload(e));
 
-                document.getElementById('saveSetupBtn').addEventListener('click', () => this.saveSetup());
-                document.getElementById('skipBtn').addEventListener('click', () => this.skipSetup());
-                document.getElementById('settingsBtn').addEventListener('click', () => this.openSettings());
+                document.getElementById('saveApiBtn').addEventListener('click', () => this.saveApiKey());
+                document.getElementById('skipBtn').addEventListener('click', () => this.apiModal.hide());
 
-                // Update status
-                this.updateStatus();
-
-                // Show setup modal if not configured
-                if (!this.workerUrl || !this.apiKey) {
-                    setTimeout(() => this.setupModal.show(), 500);
+                // Show API modal if no key is set
+                if (!this.apiKey) {
+                    this.apiModal.show();
                 }
             }
 
-            updateStatus() {
-                const statusText = document.getElementById('statusText');
-                if (this.demoMode) {
-                    statusText.textContent = 'Demo Mode';
+            saveApiKey() {
+                const key = document.getElementById('apiKeyInput').value.trim();
+                if (key) {
+                    this.apiKey = key;
+                    localStorage.setItem('vt_api_key', key);
+                    this.showToast('API key saved successfully!', 'success');
+                    this.apiModal.hide();
                 } else {
-                    statusText.textContent = 'Secure';
+                    this.showToast('Please enter a valid API key', 'warning');
                 }
-            }
-
-            openSettings() {
-                this.setupModal.show();
-            }
-
-            saveSetup() {
-                const workerUrl = document.getElementById('workerUrlInput').value.trim();
-                const apiKey = document.getElementById('apiKeyInput').value.trim();
-
-                if (!workerUrl || !apiKey) {
-                    this.showToast('Please enter both Worker URL and API Key', 'warning');
-                    return;
-                }
-
-                this.workerUrl = workerUrl;
-                this.apiKey = apiKey;
-                this.demoMode = false;
-
-                localStorage.setItem('worker_url', workerUrl);
-                localStorage.setItem('vt_api_key', apiKey);
-
-                this.updateStatus();
-                this.showToast('Configuration saved! 🎉', 'success');
-                this.setupModal.hide();
-            }
-
-            skipSetup() {
-                this.demoMode = true;
-                this.updateStatus();
-                this.showToast('Using demo mode - simulated scanning', 'info');
-                this.setupModal.hide();
             }
 
             async sendMessage() {
                 const text = this.messageInput.value.trim();
                 if (!text) return;
 
-                // Check for URLs
+                // Check if message contains URLs
                 const urlRegex = /(https?:\/\/[^\s]+)/g;
                 const urls = text.match(urlRegex);
 
-                // Add message
+                // Add message to chat
                 this.addMessage(text, 'sent');
                 this.messageInput.value = '';
 
@@ -705,37 +662,96 @@
                 // Show typing indicator
                 this.showTypingIndicator();
 
-                // Respond
+                // Random delay to simulate human response time
                 const delay = 1000 + Math.random() * 2000;
+                
                 setTimeout(() => {
                     this.hideTypingIndicator();
-                    this.addMessage(this.generateResponse(text, urls), 'received');
+                    
+                    // Generate natural response based on context
+                    let response = this.generateResponse(text, urls);
+                    this.addMessage(response, 'received');
                 }, delay);
             }
 
             generateResponse(text, urls) {
                 const responses = {
-                    greetings: ["Hey! How's it going?", "Hi there! 😊", "Hey! What's up?"],
-                    goodbyes: ["Talk to you later! 👋", "Bye! Take care!"],
-                    thanks: ["No problem! 😊", "Anytime!", "You're welcome!"],
-                    questions: ["That's a good question!", "Hmm, interesting!"],
-                    link: ["Link scanned! Looking good.", "Got it! Link checked out safe."],
-                    general: ["Got it!", "Sounds good!", "Cool!", "Nice!", "Awesome!"]
+                    greetings: [
+                        "Hey! How's it going?",
+                        "Hi there! 😊",
+                        "Hey! What's up?",
+                        "Hello! Good to hear from you!"
+                    ],
+                    goodbyes: [
+                        "Talk to you later! 👋",
+                        "Bye! Have a good one!",
+                        "See you! Take care!",
+                        "Catch you later!"
+                    ],
+                    thanks: [
+                        "No problem! 😊",
+                        "Anytime!",
+                        "You're welcome!",
+                        "Happy to help!"
+                    ],
+                    questions: [
+                        "That's a good question! Let me think...",
+                        "Hmm, interesting point!",
+                        "I see what you mean",
+                        "Good question!"
+                    ],
+                    file: [
+                        "Got it! Let me check that file for you.",
+                        "Received! Scanning it now for safety.",
+                        "Thanks! Running a security check on this.",
+                        "File received! Making sure it's safe first."
+                    ],
+                    link: [
+                        "Thanks for the link! Let me verify it's safe first.",
+                        "Got it! Checking that link for you.",
+                        "Link received! Running a quick security scan.",
+                        "I'll check that out! Just scanning it for safety first."
+                    ],
+                    general: [
+                        "Got it!",
+                        "Sounds good!",
+                        "Okay, cool!",
+                        "Nice!",
+                        "Awesome!",
+                        "Makes sense!",
+                        "For sure!",
+                        "Totally!"
+                    ]
                 };
 
-                const lower = text.toLowerCase();
+                const lowerText = text.toLowerCase();
 
-                if (lower.match(/\b(hi|hey|hello|sup)\b/)) 
+                // Check for greetings
+                if (lowerText.match(/\b(hi|hey|hello|sup|yo)\b/)) {
                     return responses.greetings[Math.floor(Math.random() * responses.greetings.length)];
-                if (lower.match(/\b(bye|goodbye|later)\b/)) 
-                    return responses.goodbyes[Math.floor(Math.random() * responses.goodbyes.length)];
-                if (lower.match(/\b(thanks|thank you)\b/)) 
-                    return responses.thanks[Math.floor(Math.random() * responses.thanks.length)];
-                if (text.includes('?')) 
-                    return responses.questions[Math.floor(Math.random() * responses.questions.length)];
-                if (urls?.length > 0) 
-                    return responses.link[Math.floor(Math.random() * responses.link.length)];
+                }
 
+                // Check for goodbyes
+                if (lowerText.match(/\b(bye|goodbye|see you|later|gtg|gotta go)\b/)) {
+                    return responses.goodbyes[Math.floor(Math.random() * responses.goodbyes.length)];
+                }
+
+                // Check for thanks
+                if (lowerText.match(/\b(thanks|thank you|thx|ty)\b/)) {
+                    return responses.thanks[Math.floor(Math.random() * responses.thanks.length)];
+                }
+
+                // Check for questions
+                if (text.includes('?')) {
+                    return responses.questions[Math.floor(Math.random() * responses.questions.length)];
+                }
+
+                // Check for links
+                if (urls && urls.length > 0) {
+                    return responses.link[Math.floor(Math.random() * responses.link.length)];
+                }
+
+                // General response
                 return responses.general[Math.floor(Math.random() * responses.general.length)];
             }
 
@@ -743,6 +759,7 @@
                 const typingDiv = document.createElement('div');
                 typingDiv.className = 'typing-indicator';
                 typingDiv.id = 'typingIndicator';
+                
                 typingDiv.innerHTML = `
                     <div class="message-avatar">J</div>
                     <div class="message-content">
@@ -751,24 +768,29 @@
                         <div class="typing-dot"></div>
                     </div>
                 `;
+
                 this.chatMessages.appendChild(typingDiv);
                 this.scrollToBottom();
             }
 
             hideTypingIndicator() {
-                document.getElementById('typingIndicator')?.remove();
+                const indicator = document.getElementById('typingIndicator');
+                if (indicator) {
+                    indicator.remove();
+                }
             }
 
-            addMessage(text, type) {
+            addMessage(text, type, isSecurityAlert = false) {
                 const messageDiv = document.createElement('div');
                 messageDiv.className = `message ${type}`;
+                
                 const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
                 const avatar = type === 'sent' ? 'You' : 'J';
 
                 messageDiv.innerHTML = `
                     <div class="message-avatar">${avatar.charAt(0)}</div>
                     <div class="message-content">
-                        <p class="message-text">${this.escapeHtml(text)}</p>
+                        <p class="message-text">${text}</p>
                         <span class="message-time">${time}</span>
                     </div>
                 `;
@@ -778,25 +800,24 @@
             }
 
             addSecurityAlert(data) {
-                const isSafe = data.positives === 0;
                 const alertDiv = document.createElement('div');
+                const isSafe = data.positives === 0;
                 
                 alertDiv.innerHTML = `
                     <div class="security-alert ${isSafe ? 'safe' : 'danger'}">
                         <div class="security-alert-header">
                             <i class="fas fa-${isSafe ? 'shield-check' : 'shield-exclamation'}"></i>
-                            Security Scan ${isSafe ? 'Complete' : 'Warning'}
+                            Security Scan Complete
                         </div>
                         <div class="security-alert-body">
-                            <strong>${this.escapeHtml(this.shortenUrl(data.resource))}</strong>
+                            <strong>${data.resource}</strong>
                             <br>
                             ${isSafe 
-                                ? '✓ No threats detected. This link is safe to visit.'
-                                : `⚠️ Warning: ${data.positives} security vendor${data.positives > 1 ? 's' : ''} flagged this as potentially dangerous!`
+                                ? 'No threats detected. This content is safe to view.'
+                                : `⚠️ Warning: ${data.positives} security vendors flagged this as potentially dangerous!`
                             }
                             <br>
                             <span class="scan-badge ${isSafe ? 'safe' : 'danger'}">
-                                <i class="fas fa-${isSafe ? 'check' : 'exclamation-triangle'}"></i>
                                 ${data.positives}/${data.total} detections
                             </span>
                         </div>
@@ -806,8 +827,9 @@
                 this.chatMessages.appendChild(alertDiv);
                 this.scrollToBottom();
 
+                // Show toast notification
                 this.showToast(
-                    isSafe ? 'Link is safe ✓' : 'Potential threat detected!',
+                    isSafe ? 'Content is safe' : 'Potential threat detected!',
                     isSafe ? 'success' : 'danger'
                 );
             }
@@ -816,6 +838,7 @@
                 const file = event.target.files[0];
                 if (!file) return;
 
+                // Add file message
                 const fileSize = this.formatFileSize(file.size);
                 const fileName = file.name;
                 
@@ -832,7 +855,7 @@
                                 <i class="fas fa-file"></i>
                             </div>
                             <div class="file-info">
-                                <div class="file-name">${this.escapeHtml(fileName)}</div>
+                                <div class="file-name">${fileName}</div>
                                 <div class="file-size">${fileSize}</div>
                             </div>
                         </div>
@@ -843,27 +866,102 @@
                 this.chatMessages.appendChild(messageDiv);
                 this.scrollToBottom();
 
+                // Show typing indicator
                 this.showTypingIndicator();
-                
-                this.showToast('File scanning not yet implemented', 'info');
-                
+
+                // Scan file
+                await this.scanFile(file);
+
+                // Hide typing and send response
                 this.hideTypingIndicator();
+                
+                const fileResponses = [
+                    "Got it! File looks good.",
+                    "Received! All clear on my end.",
+                    "Thanks for sending that!",
+                    "File checked and ready!"
+                ];
+                
                 setTimeout(() => {
-                    this.addMessage("File received! Note: File scanning requires additional setup.", 'received');
+                    this.addMessage(fileResponses[Math.floor(Math.random() * fileResponses.length)], 'received');
                 }, 500);
 
+                // Reset file input
                 event.target.value = '';
             }
 
-            async scanUrl(url) {
-                if (this.demoMode) {
-                    await this.demoScan(url);
+            async scanFile(file) {
+                if (!this.apiKey) {
+                    this.showToast('Please set up your API key first', 'warning');
+                    this.apiModal.show();
                     return;
                 }
 
                 // Show scanning message
                 const scanningDiv = document.createElement('div');
-                scanningDiv.id = 'scanning-alert';
+                scanningDiv.innerHTML = `
+                    <div class="security-alert">
+                        <div class="security-alert-header">
+                            <span class="loading"></span>
+                            Scanning file...
+                        </div>
+                        <div class="security-alert-body">
+                            Analyzing with VirusTotal antivirus engines...
+                        </div>
+                    </div>
+                `;
+                this.chatMessages.appendChild(scanningDiv);
+                this.scrollToBottom();
+
+                try {
+                    // Upload file to VirusTotal
+                    const formData = new FormData();
+                    formData.append('file', file);
+
+                    const uploadResponse = await fetch('https://www.virustotal.com/vtapi/v2/file/scan', {
+                        method: 'POST',
+                        headers: {
+                            'x-apikey': this.apiKey
+                        },
+                        body: formData
+                    });
+
+                    const uploadData = await uploadResponse.json();
+
+                    // Wait and get report
+                    await this.delay(15000); // Wait 15 seconds for scan
+
+                    const reportResponse = await fetch(
+                        `https://www.virustotal.com/vtapi/v2/file/report?apikey=${this.apiKey}&resource=${uploadData.resource}`
+                    );
+
+                    const reportData = await reportResponse.json();
+
+                    // Remove scanning message
+                    scanningDiv.remove();
+
+                    // Add security alert
+                    this.addSecurityAlert({
+                        resource: file.name,
+                        positives: reportData.positives || 0,
+                        total: reportData.total || 0
+                    });
+
+                } catch (error) {
+                    scanningDiv.remove();
+                    this.showToast('Scan failed. Please check your API key.', 'danger');
+                    console.error('Scan error:', error);
+                }
+            }
+
+            async scanUrl(url) {
+                if (!this.apiKey) {
+                    this.showToast('Please set up your API key first', 'warning');
+                    return;
+                }
+
+                // Show scanning message
+                const scanningDiv = document.createElement('div');
                 scanningDiv.innerHTML = `
                     <div class="security-alert">
                         <div class="security-alert-header">
@@ -871,7 +969,7 @@
                             Scanning link...
                         </div>
                         <div class="security-alert-body">
-                            Analyzing URL with VirusTotal engines...
+                            Analyzing URL with VirusTotal...
                         </div>
                     </div>
                 `;
@@ -880,83 +978,43 @@
 
                 try {
                     // Submit URL for scanning
-                    const scanResponse = await fetch(this.workerUrl, {
+                    const formData = new FormData();
+                    formData.append('url', url);
+
+                    const scanResponse = await fetch('https://www.virustotal.com/vtapi/v2/url/scan', {
                         method: 'POST',
                         headers: {
-                            'Content-Type': 'application/json'
+                            'x-apikey': this.apiKey
                         },
-                        body: JSON.stringify({
-                            action: 'scan_url',
-                            url: url,
-                            apiKey: this.apiKey
-                        })
+                        body: formData
                     });
 
-                    if (!scanResponse.ok) {
-                        throw new Error('Worker request failed');
-                    }
+                    const scanData = await scanResponse.json();
 
-                    // Wait for scan to complete
-                    await this.delay(8000);
+                    // Wait and get report
+                    await this.delay(10000);
 
-                    // Get report
-                    const reportResponse = await fetch(this.workerUrl, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({
-                            action: 'get_url_report',
-                            url: url,
-                            apiKey: this.apiKey
-                        })
-                    });
-
-                    if (!reportResponse.ok) {
-                        throw new Error('Report request failed');
-                    }
+                    const reportResponse = await fetch(
+                        `https://www.virustotal.com/vtapi/v2/url/report?apikey=${this.apiKey}&resource=${url}`
+                    );
 
                     const reportData = await reportResponse.json();
 
+                    // Remove scanning message
                     scanningDiv.remove();
 
-                    // Handle pending scans
-                    if (reportData.status === 'pending' || reportData.response_code === 0) {
-                        this.addSecurityAlert({
-                            resource: url,
-                            positives: 0,
-                            total: 70
-                        });
-                    } else {
-                        this.addSecurityAlert({
-                            resource: url,
-                            positives: reportData.positives || 0,
-                            total: reportData.total || 70
-                        });
-                    }
+                    // Add security alert
+                    this.addSecurityAlert({
+                        resource: url,
+                        positives: reportData.positives || 0,
+                        total: reportData.total || 0
+                    });
 
                 } catch (error) {
-                    console.error('Scan error:', error);
                     scanningDiv.remove();
-                    this.showToast('Scan failed. Check your configuration.', 'danger');
-                    
-                    // Fallback to demo
-                    await this.demoScan(url);
+                    this.showToast('Link scan failed. Please check your API key.', 'danger');
+                    console.error('URL scan error:', error);
                 }
-            }
-
-            async demoScan(url) {
-                await this.delay(2000);
-                
-                // Simulate realistic results (mostly safe)
-                const isThreat = Math.random() < 0.1; // 10% chance of threat
-                const positives = isThreat ? Math.floor(Math.random() * 12) + 1 : 0;
-                
-                this.addSecurityAlert({
-                    resource: url,
-                    positives: positives,
-                    total: 70
-                });
             }
 
             showToast(message, type = 'info') {
@@ -986,19 +1044,6 @@
                 }, 3000);
             }
 
-            escapeHtml(text) {
-                const div = document.createElement('div');
-                div.textContent = text;
-                return div.innerHTML;
-            }
-
-            shortenUrl(url) {
-                if (url.length > 50) {
-                    return url.substring(0, 47) + '...';
-                }
-                return url;
-            }
-
             formatFileSize(bytes) {
                 if (bytes === 0) return '0 Bytes';
                 const k = 1024;
@@ -1016,7 +1061,7 @@
             }
         }
 
-        // Initialize
+        // Initialize app
         const chat = new SecureChat();
     </script>
 </body>
