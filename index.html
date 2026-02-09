@@ -975,6 +975,7 @@
 
 
             async scanUrl(url) {
+                SecurityEngine.loadMaliciousCsv();
                 // Show scanning message
                 const scanningDiv = document.createElement('div');
                 scanningDiv.innerHTML = `
