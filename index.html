@@ -1,1068 +1,232 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chat with Jamie</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --primary: #2d3561;
-            --secondary: #5b7c99;
-            --accent: #00d4ff;
-            --danger: #ff4757;
-            --success: #2ed573;
-            --warning: #ffa502;
-            --bg-dark: #1a1d2e;
-            --bg-light: #f8f9fa;
-            --message-sent: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            --message-received: #2d3561;
-            --shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Outfit', sans-serif;
-            background: linear-gradient(135deg, #1a1d2e 0%, #2d3561 100%);
-            min-height: 100vh;
-            overflow: hidden;
-        }
-
-        .chat-container {
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            position: relative;
-        }
-
-        /* Header */
-        .chat-header {
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(10px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            padding: 1.5rem;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            animation: slideDown 0.5s ease;
-        }
-
-        @keyframes slideDown {
-            from {
-                transform: translateY(-100%);
-                opacity: 0;
-            }
-            to {
-                transform: translateY(0);
-                opacity: 1;
-            }
-        }
-
-        .chat-header h1 {
-            color: white;
-            font-size: 1.5rem;
-            font-weight: 600;
-            margin: 0;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .shield-icon {
-            color: var(--accent);
-            animation: pulse 2s ease-in-out infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
-        }
-
-        .status-badge {
-            background: var(--success);
-            color: white;
-            padding: 0.25rem 0.75rem;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: 500;
-        }
-
-        /* Chat Messages Area */
-        .chat-messages {
-            flex: 1;
-            overflow-y: auto;
-            padding: 2rem;
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-            background: linear-gradient(180deg, rgba(26, 29, 46, 0.8) 0%, rgba(45, 53, 97, 0.8) 100%);
-        }
-
-        .chat-messages::-webkit-scrollbar {
-            width: 8px;
-        }
-
-        .chat-messages::-webkit-scrollbar-track {
-            background: rgba(255, 255, 255, 0.05);
-        }
-
-        .chat-messages::-webkit-scrollbar-thumb {
-            background: rgba(0, 212, 255, 0.3);
-            border-radius: 10px;
-        }
-
-        /* Message Bubbles */
-        .message {
-            display: flex;
-            gap: 0.75rem;
-            max-width: 70%;
-            animation: messageSlide 0.3s ease;
-        }
-
-        @keyframes messageSlide {
-            from {
-                transform: translateY(20px);
-                opacity: 0;
-            }
-            to {
-                transform: translateY(0);
-                opacity: 1;
-            }
-        }
-
-        .message.sent {
-            margin-left: auto;
-            flex-direction: row-reverse;
-        }
-
-        .message-avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 600;
-            color: white;
-            flex-shrink: 0;
-        }
-
-        .message.sent .message-avatar {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        }
-
-        .message.received .message-avatar {
-            background: linear-gradient(135deg, #5b7c99 0%, #2d3561 100%);
-        }
-
-        .message-content {
-            background: var(--message-received);
-            padding: 1rem 1.25rem;
-            border-radius: 18px;
-            color: white;
-            position: relative;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-        }
-
-        .message.sent .message-content {
-            background: var(--message-sent);
-            border-bottom-right-radius: 4px;
-        }
-
-        .message.received .message-content {
-            border-bottom-left-radius: 4px;
-        }
-
-        .message-text {
-            margin: 0;
-            line-height: 1.5;
-            word-wrap: break-word;
-        }
-
-        .message-time {
-            font-size: 0.7rem;
-            opacity: 0.7;
-            margin-top: 0.5rem;
-            display: block;
-        }
-
-        /* Security Alerts */
-        .security-alert {
-            background: rgba(255, 255, 255, 0.05);
-            border-left: 4px solid var(--warning);
-            padding: 1rem;
-            border-radius: 8px;
-            margin: 0.5rem 0;
-            backdrop-filter: blur(10px);
-            animation: alertPulse 0.5s ease;
-        }
-
-        @keyframes alertPulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.02); }
-        }
-
-        .security-alert.safe {
-            border-left-color: var(--success);
-        }
-
-        .security-alert.danger {
-            border-left-color: var(--danger);
-        }
-
-        .security-alert-header {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-            color: white;
-        }
-
-        .security-alert-body {
-            font-size: 0.9rem;
-            opacity: 0.9;
-            color: rgba(255, 255, 255, 0.8);
-        }
-
-        .scan-badge {
-            display: inline-block;
-            padding: 0.25rem 0.5rem;
-            border-radius: 12px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            margin-top: 0.5rem;
-        }
-
-        .scan-badge.safe {
-            background: rgba(46, 213, 115, 0.2);
-            color: var(--success);
-        }
-
-        .scan-badge.danger {
-            background: rgba(255, 71, 87, 0.2);
-            color: var(--danger);
-        }
-
-        /* File Preview */
-        .file-preview {
-            background: rgba(255, 255, 255, 0.1);
-            padding: 0.75rem;
-            border-radius: 8px;
-            margin-top: 0.5rem;
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-        }
-
-        .file-icon {
-            width: 40px;
-            height: 40px;
-            background: rgba(0, 212, 255, 0.2);
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--accent);
-        }
-
-        .file-info {
-            flex: 1;
-        }
-
-        .file-name {
-            font-weight: 500;
-            font-size: 0.9rem;
-            color: white;
-        }
-
-        .file-size {
-            font-size: 0.75rem;
-            opacity: 0.7;
-            color: rgba(255, 255, 255, 0.7);
-        }
-
-        /* Input Area */
-        .chat-input-area {
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(10px);
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            padding: 1.5rem;
-            animation: slideUp 0.5s ease;
-        }
-
-        @keyframes slideUp {
-            from {
-                transform: translateY(100%);
-                opacity: 0;
-            }
-            to {
-                transform: translateY(0);
-                opacity: 1;
-            }
-        }
-
-        .input-wrapper {
-            display: flex;
-            gap: 0.75rem;
-            align-items: center;
-        }
-
-        .message-input {
-            flex: 1;
-            background: rgba(255, 255, 255, 0.1);
-            border: 2px solid rgba(255, 255, 255, 0.1);
-            color: white;
-            padding: 1rem 1.25rem;
-            border-radius: 25px;
-            font-size: 1rem;
-            transition: all 0.3s ease;
-        }
-
-        .message-input:focus {
-            outline: none;
-            border-color: var(--accent);
-            background: rgba(255, 255, 255, 0.15);
-            box-shadow: 0 0 20px rgba(0, 212, 255, 0.2);
-        }
-
-        .message-input::placeholder {
-            color: rgba(255, 255, 255, 0.5);
-        }
-
-        .input-btn {
-            width: 50px;
-            height: 50px;
-            border: none;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.1);
-            color: white;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.3s ease;
-            position: relative;
-        }
-
-        .input-btn:hover {
-            background: rgba(255, 255, 255, 0.2);
-            transform: scale(1.1);
-        }
-
-        .input-btn.send {
-            background: linear-gradient(135deg, var(--accent) 0%, #0099cc 100%);
-        }
-
-        .input-btn.send:hover {
-            box-shadow: 0 5px 20px rgba(0, 212, 255, 0.4);
-        }
-
-        .input-btn input[type="file"] {
-            position: absolute;
-            opacity: 0;
-            width: 100%;
-            height: 100%;
-            cursor: pointer;
-        }
-
-        /* Loading Spinner */
-        .loading {
-            display: inline-block;
-            width: 16px;
-            height: 16px;
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            border-top: 2px solid white;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        /* Typing Indicator */
-        .typing-indicator {
-            display: flex;
-            gap: 0.75rem;
-            max-width: 70%;
-            animation: messageSlide 0.3s ease;
-        }
-
-        .typing-indicator .message-content {
-            background: var(--message-received);
-            padding: 1rem 1.25rem;
-            border-radius: 18px;
-            border-bottom-left-radius: 4px;
-            display: flex;
-            gap: 4px;
-            align-items: center;
-        }
-
-        .typing-dot {
-            width: 8px;
-            height: 8px;
-            background: rgba(255, 255, 255, 0.6);
-            border-radius: 50%;
-            animation: typingDot 1.4s infinite;
-        }
-
-        .typing-dot:nth-child(2) {
-            animation-delay: 0.2s;
-        }
-
-        .typing-dot:nth-child(3) {
-            animation-delay: 0.4s;
-        }
-
-        @keyframes typingDot {
-            0%, 60%, 100% {
-                transform: translateY(0);
-                opacity: 0.6;
-            }
-            30% {
-                transform: translateY(-10px);
-                opacity: 1;
-            }
-        }
-
-        /* Notification Toast */
-        .toast-container {
-            position: fixed;
-            top: 80px;
-            right: 20px;
-            z-index: 1000;
-        }
-
-        .custom-toast {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border-radius: 12px;
-            padding: 1rem 1.5rem;
-            margin-bottom: 1rem;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
-            animation: toastSlide 0.3s ease;
-        }
-
-        @keyframes toastSlide {
-            from {
-                transform: translateX(400px);
-                opacity: 0;
-            }
-            to {
-                transform: translateX(0);
-                opacity: 1;
-            }
-        }
-
-        /* API Setup Modal */
-        .modal-content {
-            background: var(--bg-dark);
-            color: white;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 16px;
-        }
-
-        .modal-header {
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .modal-footer {
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .form-control {
-            background: rgba(255, 255, 255, 0.1);
-            border: 2px solid rgba(255, 255, 255, 0.1);
-            color: white;
-        }
-
-        .form-control:focus {
-            background: rgba(255, 255, 255, 0.15);
-            border-color: var(--accent);
-            color: white;
-        }
-
-        .btn-primary {
-            background: var(--accent);
-            border: none;
-        }
-
-        .btn-primary:hover {
-            background: #00b8e6;
-        }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            .message {
-                max-width: 85%;
-            }
-
-            .chat-header h1 {
-                font-size: 1.25rem;
-            }
-
-            .chat-messages {
-                padding: 1rem;
-            }
-        }
-    </style>
+<meta charset="UTF-8">
+<title>Secure Chat – Custom Heuristic Engine</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+
+<style>
+body {
+  background: linear-gradient(135deg, #1a1d2e, #2d3561);
+  font-family: Arial, sans-serif;
+  height: 100vh;
+  margin: 0;
+}
+.chat-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+.chat-header {
+  padding: 1rem;
+  color: white;
+  font-weight: bold;
+  background: rgba(255,255,255,0.05);
+}
+.chat-messages {
+  flex: 1;
+  padding: 1rem;
+  overflow-y: auto;
+}
+.message {
+  max-width: 70%;
+  margin-bottom: 1rem;
+}
+.sent {
+  margin-left: auto;
+}
+.message-content {
+  padding: 0.75rem 1rem;
+  border-radius: 12px;
+  color: white;
+}
+.sent .message-content {
+  background: #667eea;
+}
+.received .message-content {
+  background: #2d3561;
+}
+.security-alert {
+  background: rgba(255,255,255,0.08);
+  border-left: 4px solid red;
+  padding: 0.75rem;
+  color: white;
+  margin-bottom: 1rem;
+}
+.security-alert.safe {
+  border-left-color: #2ed573;
+}
+.chat-input {
+  padding: 1rem;
+  display: flex;
+  gap: 0.5rem;
+  background: rgba(255,255,255,0.05);
+}
+.chat-input input {
+  flex: 1;
+}
+</style>
 </head>
+
 <body>
-    <div class="chat-container">
-        <!-- Header -->
-        <div class="chat-header">
-            <h1>
-                <i class="fas fa-shield-halved shield-icon"></i>
-                Jamie
-            </h1>
-            <div>
-                <span class="status-badge">
-                    <i class="fas fa-circle" style="font-size: 0.6rem;"></i> Online
-                </span>
-            </div>
-        </div>
-
-        <!-- Messages Area -->
-        <div class="chat-messages" id="chatMessages">
-            <div class="message received">
-                <div class="message-avatar">J</div>
-                <div class="message-content">
-                    <p class="message-text">Hey! 👋</p>
-                    <span class="message-time">Just now</span>
-                </div>
-            </div>
-        </div>
-
-        <!-- Input Area -->
-        <div class="chat-input-area">
-            <div class="input-wrapper">
-                <button class="input-btn" id="attachBtn" title="Attach file">
-                    <i class="fas fa-paperclip"></i>
-                    <input type="file" id="fileInput" accept="*/*">
-                </button>
-                
-                <input 
-                    type="text" 
-                    class="message-input" 
-                    id="messageInput" 
-                    placeholder="Type a message or paste a link..."
-                    autocomplete="off"
-                >
-                
-                <button class="input-btn send" id="sendBtn">
-                    <i class="fas fa-paper-plane"></i>
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Toast Container -->
-    <div class="toast-container" id="toastContainer"></div>
-
-    <!-- API Key Setup Modal -->
-    <div class="modal fade" id="apiModal" tabindex="-1" data-bs-backdrop="static">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">
-                        <i class="fas fa-shield-halved"></i> Security Setup
-                    </h5>
-                </div>
-                <div class="modal-body">
-                    <p>To enable automatic file and link scanning, enter your VirusTotal API key:</p>
-                    <div class="mb-3">
-                        <label for="apiKeyInput" class="form-label">API Key (Optional)</label>
-                        <input type="text" class="form-control" id="apiKeyInput" placeholder="Enter your API key">
-                        <div class="form-text text-light mt-2">
-                            Get a free key at <a href="https://www.virustotal.com/gui/join-us" target="_blank" class="text-info">virustotal.com</a>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" id="skipBtn">Skip</button>
-                    <button type="button" class="btn btn-primary" id="saveApiBtn">Save</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        class SecureChat {
-            constructor() {
-                this.apiKey = localStorage.getItem('vt_api_key') || '';
-                this.messages = [];
-                this.init();
-            }
-
-            init() {
-                // DOM Elements
-                this.chatMessages = document.getElementById('chatMessages');
-                this.messageInput = document.getElementById('messageInput');
-                this.sendBtn = document.getElementById('sendBtn');
-                this.fileInput = document.getElementById('fileInput');
-                this.apiModal = new bootstrap.Modal(document.getElementById('apiModal'));
-
-                // Event Listeners
-                this.sendBtn.addEventListener('click', () => this.sendMessage());
-                this.messageInput.addEventListener('keypress', (e) => {
-                    if (e.key === 'Enter') this.sendMessage();
-                });
-                this.fileInput.addEventListener('change', (e) => this.handleFileUpload(e));
-
-                document.getElementById('saveApiBtn').addEventListener('click', () => this.saveApiKey());
-                document.getElementById('skipBtn').addEventListener('click', () => this.apiModal.hide());
-
-                // Show API modal if no key is set
-                if (!this.apiKey) {
-                    this.apiModal.show();
-                }
-            }
-
-            saveApiKey() {
-                const key = document.getElementById('apiKeyInput').value.trim();
-                if (key) {
-                    this.apiKey = key;
-                    localStorage.setItem('vt_api_key', key);
-                    this.showToast('API key saved successfully!', 'success');
-                    this.apiModal.hide();
-                } else {
-                    this.showToast('Please enter a valid API key', 'warning');
-                }
-            }
-
-            async sendMessage() {
-                const text = this.messageInput.value.trim();
-                if (!text) return;
-
-                // Check if message contains URLs
-                const urlRegex = /(https?:\/\/[^\s]+)/g;
-                const urls = text.match(urlRegex);
-
-                // Add message to chat
-                this.addMessage(text, 'sent');
-                this.messageInput.value = '';
-
-                // Scan URLs if found
-                if (urls && urls.length > 0) {
-                    for (const url of urls) {
-                        await this.scanUrl(url);
-                    }
-                }
-
-                // Show typing indicator
-                this.showTypingIndicator();
-
-                // Random delay to simulate human response time
-                const delay = 1000 + Math.random() * 2000;
-                
-                setTimeout(() => {
-                    this.hideTypingIndicator();
-                    
-                    // Generate natural response based on context
-                    let response = this.generateResponse(text, urls);
-                    this.addMessage(response, 'received');
-                }, delay);
-            }
-
-            generateResponse(text, urls) {
-                const responses = {
-                    greetings: [
-                        "Hey! How's it going?",
-                        "Hi there! 😊",
-                        "Hey! What's up?",
-                        "Hello! Good to hear from you!"
-                    ],
-                    goodbyes: [
-                        "Talk to you later! 👋",
-                        "Bye! Have a good one!",
-                        "See you! Take care!",
-                        "Catch you later!"
-                    ],
-                    thanks: [
-                        "No problem! 😊",
-                        "Anytime!",
-                        "You're welcome!",
-                        "Happy to help!"
-                    ],
-                    questions: [
-                        "That's a good question! Let me think...",
-                        "Hmm, interesting point!",
-                        "I see what you mean",
-                        "Good question!"
-                    ],
-                    file: [
-                        "Got it! Let me check that file for you.",
-                        "Received! Scanning it now for safety.",
-                        "Thanks! Running a security check on this.",
-                        "File received! Making sure it's safe first."
-                    ],
-                    link: [
-                        "Thanks for the link! Let me verify it's safe first.",
-                        "Got it! Checking that link for you.",
-                        "Link received! Running a quick security scan.",
-                        "I'll check that out! Just scanning it for safety first."
-                    ],
-                    general: [
-                        "Got it!",
-                        "Sounds good!",
-                        "Okay, cool!",
-                        "Nice!",
-                        "Awesome!",
-                        "Makes sense!",
-                        "For sure!",
-                        "Totally!"
-                    ]
-                };
-
-                const lowerText = text.toLowerCase();
-
-                // Check for greetings
-                if (lowerText.match(/\b(hi|hey|hello|sup|yo)\b/)) {
-                    return responses.greetings[Math.floor(Math.random() * responses.greetings.length)];
-                }
-
-                // Check for goodbyes
-                if (lowerText.match(/\b(bye|goodbye|see you|later|gtg|gotta go)\b/)) {
-                    return responses.goodbyes[Math.floor(Math.random() * responses.goodbyes.length)];
-                }
-
-                // Check for thanks
-                if (lowerText.match(/\b(thanks|thank you|thx|ty)\b/)) {
-                    return responses.thanks[Math.floor(Math.random() * responses.thanks.length)];
-                }
-
-                // Check for questions
-                if (text.includes('?')) {
-                    return responses.questions[Math.floor(Math.random() * responses.questions.length)];
-                }
-
-                // Check for links
-                if (urls && urls.length > 0) {
-                    return responses.link[Math.floor(Math.random() * responses.link.length)];
-                }
-
-                // General response
-                return responses.general[Math.floor(Math.random() * responses.general.length)];
-            }
-
-            showTypingIndicator() {
-                const typingDiv = document.createElement('div');
-                typingDiv.className = 'typing-indicator';
-                typingDiv.id = 'typingIndicator';
-                
-                typingDiv.innerHTML = `
-                    <div class="message-avatar">J</div>
-                    <div class="message-content">
-                        <div class="typing-dot"></div>
-                        <div class="typing-dot"></div>
-                        <div class="typing-dot"></div>
-                    </div>
-                `;
-
-                this.chatMessages.appendChild(typingDiv);
-                this.scrollToBottom();
-            }
-
-            hideTypingIndicator() {
-                const indicator = document.getElementById('typingIndicator');
-                if (indicator) {
-                    indicator.remove();
-                }
-            }
-
-            addMessage(text, type, isSecurityAlert = false) {
-                const messageDiv = document.createElement('div');
-                messageDiv.className = `message ${type}`;
-                
-                const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-                const avatar = type === 'sent' ? 'You' : 'J';
-
-                messageDiv.innerHTML = `
-                    <div class="message-avatar">${avatar.charAt(0)}</div>
-                    <div class="message-content">
-                        <p class="message-text">${text}</p>
-                        <span class="message-time">${time}</span>
-                    </div>
-                `;
-
-                this.chatMessages.appendChild(messageDiv);
-                this.scrollToBottom();
-            }
-
-            addSecurityAlert(data) {
-                const alertDiv = document.createElement('div');
-                const isSafe = data.positives === 0;
-                
-                alertDiv.innerHTML = `
-                    <div class="security-alert ${isSafe ? 'safe' : 'danger'}">
-                        <div class="security-alert-header">
-                            <i class="fas fa-${isSafe ? 'shield-check' : 'shield-exclamation'}"></i>
-                            Security Scan Complete
-                        </div>
-                        <div class="security-alert-body">
-                            <strong>${data.resource}</strong>
-                            <br>
-                            ${isSafe 
-                                ? 'No threats detected. This content is safe to view.'
-                                : `⚠️ Warning: ${data.positives} security vendors flagged this as potentially dangerous!`
-                            }
-                            <br>
-                            <span class="scan-badge ${isSafe ? 'safe' : 'danger'}">
-                                ${data.positives}/${data.total} detections
-                            </span>
-                        </div>
-                    </div>
-                `;
-
-                this.chatMessages.appendChild(alertDiv);
-                this.scrollToBottom();
-
-                // Show toast notification
-                this.showToast(
-                    isSafe ? 'Content is safe' : 'Potential threat detected!',
-                    isSafe ? 'success' : 'danger'
-                );
-            }
-
-            async handleFileUpload(event) {
-                const file = event.target.files[0];
-                if (!file) return;
-
-                // Add file message
-                const fileSize = this.formatFileSize(file.size);
-                const fileName = file.name;
-                
-                const messageDiv = document.createElement('div');
-                messageDiv.className = 'message sent';
-                const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-
-                messageDiv.innerHTML = `
-                    <div class="message-avatar">You</div>
-                    <div class="message-content">
-                        <p class="message-text">Uploaded a file:</p>
-                        <div class="file-preview">
-                            <div class="file-icon">
-                                <i class="fas fa-file"></i>
-                            </div>
-                            <div class="file-info">
-                                <div class="file-name">${fileName}</div>
-                                <div class="file-size">${fileSize}</div>
-                            </div>
-                        </div>
-                        <span class="message-time">${time}</span>
-                    </div>
-                `;
-
-                this.chatMessages.appendChild(messageDiv);
-                this.scrollToBottom();
-
-                // Show typing indicator
-                this.showTypingIndicator();
-
-                // Scan file
-                await this.scanFile(file);
-
-                // Hide typing and send response
-                this.hideTypingIndicator();
-                
-                const fileResponses = [
-                    "Got it! File looks good.",
-                    "Received! All clear on my end.",
-                    "Thanks for sending that!",
-                    "File checked and ready!"
-                ];
-                
-                setTimeout(() => {
-                    this.addMessage(fileResponses[Math.floor(Math.random() * fileResponses.length)], 'received');
-                }, 500);
-
-                // Reset file input
-                event.target.value = '';
-            }
-
-            async scanFile(file) {
-                if (!this.apiKey) {
-                    this.showToast('Please set up your API key first', 'warning');
-                    this.apiModal.show();
-                    return;
-                }
-
-                // Show scanning message
-                const scanningDiv = document.createElement('div');
-                scanningDiv.innerHTML = `
-                    <div class="security-alert">
-                        <div class="security-alert-header">
-                            <span class="loading"></span>
-                            Scanning file...
-                        </div>
-                        <div class="security-alert-body">
-                            Analyzing with VirusTotal antivirus engines...
-                        </div>
-                    </div>
-                `;
-                this.chatMessages.appendChild(scanningDiv);
-                this.scrollToBottom();
-
-                try {
-                    // Upload file to VirusTotal
-                    const formData = new FormData();
-                    formData.append('file', file);
-
-                    const uploadResponse = await fetch('https://www.virustotal.com/vtapi/v2/file/scan', {
-                        method: 'POST',
-                        headers: {
-                            'x-apikey': this.apiKey
-                        },
-                        body: formData
-                    });
-
-                    const uploadData = await uploadResponse.json();
-
-                    // Wait and get report
-                    await this.delay(15000); // Wait 15 seconds for scan
-
-                    const reportResponse = await fetch(
-                        `https://www.virustotal.com/vtapi/v2/file/report?apikey=${this.apiKey}&resource=${uploadData.resource}`
-                    );
-
-                    const reportData = await reportResponse.json();
-
-                    // Remove scanning message
-                    scanningDiv.remove();
-
-                    // Add security alert
-                    this.addSecurityAlert({
-                        resource: file.name,
-                        positives: reportData.positives || 0,
-                        total: reportData.total || 0
-                    });
-
-                } catch (error) {
-                    scanningDiv.remove();
-                    this.showToast('Scan failed. Please check your API key.', 'danger');
-                    console.error('Scan error:', error);
-                }
-            }
-
-            async scanUrl(url) {
-                if (!this.apiKey) {
-                    this.showToast('Please set up your API key first', 'warning');
-                    return;
-                }
-
-                // Show scanning message
-                const scanningDiv = document.createElement('div');
-                scanningDiv.innerHTML = `
-                    <div class="security-alert">
-                        <div class="security-alert-header">
-                            <span class="loading"></span>
-                            Scanning link...
-                        </div>
-                        <div class="security-alert-body">
-                            Analyzing URL with VirusTotal...
-                        </div>
-                    </div>
-                `;
-                this.chatMessages.appendChild(scanningDiv);
-                this.scrollToBottom();
-
-                try {
-                    // Submit URL for scanning
-                    const formData = new FormData();
-                    formData.append('url', url);
-
-                    const scanResponse = await fetch('https://www.virustotal.com/vtapi/v2/url/scan', {
-                        method: 'POST',
-                        headers: {
-                            'x-apikey': this.apiKey
-                        },
-                        body: formData
-                    });
-
-                    const scanData = await scanResponse.json();
-
-                    // Wait and get report
-                    await this.delay(10000);
-
-                    const reportResponse = await fetch(
-                        `https://www.virustotal.com/vtapi/v2/url/report?apikey=${this.apiKey}&resource=${url}`
-                    );
-
-                    const reportData = await reportResponse.json();
-
-                    // Remove scanning message
-                    scanningDiv.remove();
-
-                    // Add security alert
-                    this.addSecurityAlert({
-                        resource: url,
-                        positives: reportData.positives || 0,
-                        total: reportData.total || 0
-                    });
-
-                } catch (error) {
-                    scanningDiv.remove();
-                    this.showToast('Link scan failed. Please check your API key.', 'danger');
-                    console.error('URL scan error:', error);
-                }
-            }
-
-            showToast(message, type = 'info') {
-                const toastContainer = document.getElementById('toastContainer');
-                const toast = document.createElement('div');
-                toast.className = 'custom-toast';
-                
-                const icons = {
-                    success: 'fa-check-circle text-success',
-                    danger: 'fa-exclamation-circle text-danger',
-                    warning: 'fa-exclamation-triangle text-warning',
-                    info: 'fa-info-circle text-info'
-                };
-
-                toast.innerHTML = `
-                    <div class="d-flex align-items-center">
-                        <i class="fas ${icons[type]} me-2"></i>
-                        <span class="text-dark">${message}</span>
-                    </div>
-                `;
-
-                toastContainer.appendChild(toast);
-
-                setTimeout(() => {
-                    toast.style.animation = 'toastSlide 0.3s ease reverse';
-                    setTimeout(() => toast.remove(), 300);
-                }, 3000);
-            }
-
-            formatFileSize(bytes) {
-                if (bytes === 0) return '0 Bytes';
-                const k = 1024;
-                const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-                const i = Math.floor(Math.log(bytes) / Math.log(k));
-                return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
-            }
-
-            delay(ms) {
-                return new Promise(resolve => setTimeout(resolve, ms));
-            }
-
-            scrollToBottom() {
-                this.chatMessages.scrollTop = this.chatMessages.scrollHeight;
-            }
-        }
-
-        // Initialize app
-        const chat = new SecureChat();
-    </script>
+
+<div class="chat-container">
+  <div class="chat-header">
+    <i class="fa-solid fa-shield-halved"></i> Secure Chat (Custom Engine)
+  </div>
+
+  <div class="chat-messages" id="chatMessages"></div>
+
+  <div class="chat-input">
+    <input id="messageInput" class="form-control" placeholder="Type message or paste link">
+    <input type="file" id="fileInput" class="form-control">
+    <button class="btn btn-primary" id="sendBtn">Send</button>
+  </div>
+</div>
+
+<script>
+/* ============================
+   CONFIG
+============================ */
+
+const MALICIOUS_KEYWORDS = [
+  "free-money", "crypto", "wallet", "airdrop",
+  "hack", "keygen", "crack", "stealer",
+  "trojan", "virus", "malware",
+  "login", "verify", "update-now", "secure-now"
+];
+
+let maliciousCsvEntries = [];
+
+/* ============================
+   LOAD CSV
+============================ */
+
+async function loadMaliciousCsv() {
+  try {
+    const res = await fetch("malicious_phish.csv");
+    const text = await res.text();
+    maliciousCsvEntries = text
+      .split("\n")
+      .map(l => l.trim().toLowerCase())
+      .filter(Boolean);
+  } catch (e) {
+    console.warn("CSV not loaded");
+  }
+}
+loadMaliciousCsv();
+
+/* ============================
+   DETECTION ENGINE
+============================ */
+
+function containsMaliciousKeyword(value) {
+  return MALICIOUS_KEYWORDS.some(k =>
+    value.toLowerCase().includes(k)
+  );
+}
+
+function isInMaliciousCsv(value) {
+  return maliciousCsvEntries.some(entry =>
+    value.toLowerCase().includes(entry)
+  );
+}
+
+function analyzeLink(url) {
+  if (containsMaliciousKeyword(url))
+    return { dangerous: true, reason: "Malicious keyword in URL" };
+
+  if (isInMaliciousCsv(url))
+    return { dangerous: true, reason: "URL found in malicious list" };
+
+  return { dangerous: false };
+}
+
+function analyzeFile(file) {
+  const name = file.name.toLowerCase();
+
+  if (name.endsWith(".exe"))
+    return { dangerous: true, reason: "Executable files are blocked" };
+
+  if (containsMaliciousKeyword(name))
+    return { dangerous: true, reason: "Malicious keyword in filename" };
+
+  if (isInMaliciousCsv(name))
+    return { dangerous: true, reason: "Filename found in malicious list" };
+
+  return { dangerous: false };
+}
+
+/* ============================
+   UI HELPERS
+============================ */
+
+const chatMessages = document.getElementById("chatMessages");
+
+function addMessage(text, type) {
+  const div = document.createElement("div");
+  div.className = `message ${type}`;
+  div.innerHTML = `<div class="message-content">${text}</div>`;
+  chatMessages.appendChild(div);
+  chatMessages.scrollTop = chatMessages.scrollHeight;
+}
+
+function addSecurityAlert(text, safe = false) {
+  const div = document.createElement("div");
+  div.className = `security-alert ${safe ? "safe" : ""}`;
+  div.innerHTML = `<strong>${safe ? "SAFE" : "DANGEROUS"}:</strong> ${text}`;
+  chatMessages.appendChild(div);
+  chatMessages.scrollTop = chatMessages.scrollHeight;
+}
+
+/* ============================
+   EVENTS
+============================ */
+
+document.getElementById("sendBtn").onclick = () => {
+  const input = document.getElementById("messageInput");
+  const text = input.value.trim();
+  if (!text) return;
+
+  addMessage(text, "sent");
+  input.value = "";
+
+  const urls = text.match(/https?:\/\/[^\s]+/g);
+  if (urls) {
+    for (const url of urls) {
+      const result = analyzeLink(url);
+      if (result.dangerous) {
+        addSecurityAlert(`${url} → ${result.reason}`);
+        addMessage("⚠️ Link blocked", "received");
+        return;
+      }
+    }
+  }
+
+  addMessage("Looks good 👍", "received");
+};
+
+document.getElementById("fileInput").onchange = (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+
+  const result = analyzeFile(file);
+  addMessage(`Uploaded file: ${file.name}`, "sent");
+
+  if (result.dangerous) {
+    addSecurityAlert(`${file.name} → ${result.reason}`);
+    addMessage("🚫 File blocked", "received");
+  } else {
+    addSecurityAlert(`${file.name} is safe`, true);
+    addMessage("File accepted 👍", "received");
+  }
+
+  e.target.value = "";
+};
+</script>
+
 </body>
 </html>
