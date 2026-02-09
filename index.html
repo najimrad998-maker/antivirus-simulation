@@ -937,7 +937,7 @@
 
                 try {
                     // Small delay to simulate scan time
-                    await this.delay(1200);
+                    await this.delay(3000);
 
                     // CUSTOM FILE ANALYSIS
                     const result = SecurityEngine.analyzeFile(file);
@@ -993,7 +993,7 @@
 
                 try {
                     // Small delay for UX consistency
-                    await this.delay(1000);
+                    await this.delay(3000);
 
                     // CUSTOM URL ANALYSIS
                     const result = SecurityEngine.analyzeLink(url);
