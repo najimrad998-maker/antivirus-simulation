@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chat with Jamie</title>
+    <title>Chat avec Naji</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="security_engine.js"></script>
@@ -554,11 +554,11 @@
         <div class="chat-header">
             <h1>
                 <i class="fas fa-shield-halved shield-icon"></i>
-                Jamie
+                Naji
             </h1>
             <div>
                 <span class="status-badge">
-                    <i class="fas fa-circle" style="font-size: 0.6rem;"></i> Online
+                    <i class="fas fa-circle" style="font-size: 0.6rem;"></i> En ligne
                 </span>
             </div>
         </div>
@@ -566,10 +566,10 @@
         <!-- Messages Area -->
         <div class="chat-messages" id="chatMessages">
             <div class="message received">
-                <div class="message-avatar">J</div>
+                <div class="message-avatar">N</div>
                 <div class="message-content">
-                    <p class="message-text">Hey! 👋</p>
-                    <span class="message-time">Just now</span>
+                    <p class="message-text">Salut ! 👋</p>
+                    <span class="message-time">À l'instant</span>
                 </div>
             </div>
         </div>
@@ -577,13 +577,13 @@
         <!-- Input Area -->
         <div class="chat-input-area">
             <div class="input-wrapper">
-                <button class="input-btn" id="attachBtn" title="Attach file">
+                <button class="input-btn" id="attachBtn" title="Joindre un fichier">
                     <i class="fas fa-paperclip"></i>
                     <input type="file" id="fileInput" accept="*/*">
                 </button>
 
                 <input type="text" class="message-input" id="messageInput"
-                    placeholder="Type a message or paste a link..." autocomplete="off">
+                    placeholder="Tapez un message ou collez un lien..." autocomplete="off">
 
                 <button class="input-btn send" id="sendBtn">
                     <i class="fas fa-paper-plane"></i>
@@ -601,23 +601,23 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">
-                        <i class="fas fa-shield-halved"></i> Security Setup
+                        <i class="fas fa-shield-halved"></i> Configuration de sécurité
                     </h5>
                 </div>
                 <div class="modal-body">
-                    <p>To enable automatic file and link scanning, enter your VirusTotal API key:</p>
+                    <p>Pour activer l'analyse automatique des fichiers et des liens, entrez votre clé API VirusTotal :</p>
                     <div class="mb-3">
-                        <label for="apiKeyInput" class="form-label">API Key (Optional)</label>
-                        <input type="text" class="form-control" id="apiKeyInput" placeholder="Enter your API key">
+                        <label for="apiKeyInput" class="form-label">Clé API (Optionnel)</label>
+                        <input type="text" class="form-control" id="apiKeyInput" placeholder="Entrez votre clé API">
                         <div class="form-text text-light mt-2">
-                            Get a free key at <a href="https://www.virustotal.com/gui/join-us" target="_blank"
+                            Obtenez une clé gratuite sur <a href="https://www.virustotal.com/gui/join-us" target="_blank"
                                 class="text-info">virustotal.com</a>
                         </div>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" id="skipBtn">Skip</button>
-                    <button type="button" class="btn btn-primary" id="saveApiBtn">Save</button>
+                    <button type="button" class="btn btn-secondary" id="skipBtn">Passer</button>
+                    <button type="button" class="btn btn-primary" id="saveApiBtn">Enregistrer</button>
                 </div>
             </div>
         </div>
@@ -661,10 +661,10 @@
                 if (key) {
                     this.apiKey = key;
                     localStorage.setItem('vt_api_key', key);
-                    this.showToast('API key saved successfully!', 'success');
+                    this.showToast('Clé API enregistrée avec succès !', 'success');
                     this.apiModal.hide();
                 } else {
-                    this.showToast('Please enter a valid API key', 'warning');
+                    this.showToast('Veuillez entrer une clé API valide', 'warning');
                 }
             }
 
@@ -705,67 +705,67 @@
             generateResponse(text, urls) {
                 const responses = {
                     greetings: [
-                        "Hey! How's it going?",
-                        "Hi there! 😊",
-                        "Hey! What's up?",
-                        "Hello! Good to hear from you!"
+                        "Salut ! Comment ça va ?",
+                        "Coucou ! 😊",
+                        "Hey ! Quoi de neuf ?",
+                        "Salut ! Content d'avoir de tes nouvelles !"
                     ],
                     goodbyes: [
-                        "Talk to you later! 👋",
-                        "Bye! Have a good one!",
-                        "See you! Take care!",
-                        "Catch you later!"
+                        "À plus tard ! 👋",
+                        "Salut ! Passe une bonne journée !",
+                        "À bientôt ! Prends soin de toi !",
+                        "À plus !"
                     ],
                     thanks: [
-                        "No problem! 😊",
-                        "Anytime!",
-                        "You're welcome!",
-                        "Happy to help!"
+                        "Pas de problème ! 😊",
+                        "De rien !",
+                        "Avec plaisir !",
+                        "Content d'aider !"
                     ],
                     questions: [
-                        "That's a good question! Let me think...",
-                        "Hmm, interesting point!",
-                        "I see what you mean",
-                        "Good question!"
+                        "Bonne question ! Laisse-moi réfléchir...",
+                        "Hmm, point intéressant !",
+                        "Je vois ce que tu veux dire",
+                        "Bonne question !"
                     ],
                     file: [
-                        "Got it! Let me check that file for you.",
-                        "Received! Scanning it now for safety.",
-                        "Thanks! Running a security check on this.",
-                        "File received! Making sure it's safe first."
+                        "Reçu ! Laisse-moi vérifier ce fichier.",
+                        "Reçu ! Je l'analyse pour la sécurité.",
+                        "Merci ! Je lance une vérification de sécurité.",
+                        "Fichier reçu ! Je m'assure qu'il est sûr d'abord."
                     ],
                     link: [
-                        "Thanks for the link! Let me verify it's safe first.",
-                        "Got it! Checking that link for you.",
-                        "Link received! Running a quick security scan.",
-                        "I'll check that out! Just scanning it for safety first."
+                        "Merci pour le lien ! Je vérifie qu'il est sûr d'abord.",
+                        "Reçu ! Je vérifie ce lien pour toi.",
+                        "Lien reçu ! Je lance une analyse de sécurité rapide.",
+                        "Je vais regarder ça ! Je scanne juste pour la sécurité d'abord."
                     ],
                     general: [
-                        "Got it!",
-                        "Sounds good!",
-                        "Okay, cool!",
-                        "Nice!",
-                        "Awesome!",
-                        "Makes sense!",
-                        "For sure!",
-                        "Totally!"
+                        "Compris !",
+                        "Ça marche !",
+                        "OK, cool !",
+                        "Nice !",
+                        "Génial !",
+                        "Ça a du sens !",
+                        "Carrément !",
+                        "Totalement !"
                     ]
                 };
 
                 const lowerText = text.toLowerCase();
 
                 // Check for greetings
-                if (lowerText.match(/\b(hi|hey|hello|sup|yo)\b/)) {
+                if (lowerText.match(/\b(salut|coucou|bonjour|hey|cc)\b/)) {
                     return responses.greetings[Math.floor(Math.random() * responses.greetings.length)];
                 }
 
                 // Check for goodbyes
-                if (lowerText.match(/\b(bye|goodbye|see you|later|gtg|gotta go)\b/)) {
+                if (lowerText.match(/\b(bye|au revoir|à plus|à bientôt|salut|ciao)\b/)) {
                     return responses.goodbyes[Math.floor(Math.random() * responses.goodbyes.length)];
                 }
 
                 // Check for thanks
-                if (lowerText.match(/\b(thanks|thank you|thx|ty)\b/)) {
+                if (lowerText.match(/\b(merci|merci beaucoup|thanks)\b/)) {
                     return responses.thanks[Math.floor(Math.random() * responses.thanks.length)];
                 }
 
@@ -789,7 +789,7 @@
                 typingDiv.id = 'typingIndicator';
 
                 typingDiv.innerHTML = `
-                    <div class="message-avatar">J</div>
+                    <div class="message-avatar">N</div>
                     <div class="message-content">
                         <div class="typing-dot"></div>
                         <div class="typing-dot"></div>
@@ -813,7 +813,7 @@
                 messageDiv.className = `message ${type}`;
 
                 const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-                const avatar = type === 'sent' ? 'You' : 'J';
+                const avatar = type === 'sent' ? 'Vous' : 'N';
 
                 messageDiv.innerHTML = `
                     <div class="message-avatar">${avatar.charAt(0)}</div>
@@ -835,18 +835,18 @@
                     <div class="security-alert ${isSafe ? 'safe' : 'danger'}">
                         <div class="security-alert-header">
                             <i class="fas fa-${isSafe ? 'shield-check' : 'shield-exclamation'}"></i>
-                            Security Scan Complete
+                            Analyse de sécurité terminée
                         </div>
                         <div class="security-alert-body">
                             <strong>${data.resource}</strong>
                             <br>
                             ${isSafe
-                        ? 'No threats detected. This content is safe to view.'
-                        : `⚠️ Warning: ${data.positives} security vendors flagged this as potentially dangerous!`
+                        ? 'Aucune menace détectée. Ce contenu est sûr à consulter.'
+                        : `⚠️ Attention : ${data.positives} fournisseur(s) de sécurité ont signalé ceci comme potentiellement dangereux !`
                     }
                             <br>
                             <span class="scan-badge ${isSafe ? 'safe' : 'danger'}">
-                                ${data.positives}/${data.total} detections
+                                ${data.positives}/${data.total} détections
                             </span>
                         </div>
                     </div>
@@ -857,7 +857,7 @@
 
                 // Show toast notification
                 this.showToast(
-                    isSafe ? 'Content is safe' : 'Potential threat detected!',
+                    isSafe ? 'Le contenu est sûr' : 'Menace potentielle détectée !',
                     isSafe ? 'success' : 'danger'
                 );
             }
@@ -875,9 +875,9 @@
                 const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
                 messageDiv.innerHTML = `
-                    <div class="message-avatar">You</div>
+                    <div class="message-avatar">V</div>
                     <div class="message-content">
-                        <p class="message-text">Uploaded a file:</p>
+                        <p class="message-text">Fichier envoyé :</p>
                         <div class="file-preview">
                             <div class="file-icon">
                                 <i class="fas fa-file"></i>
@@ -904,10 +904,10 @@
                 this.hideTypingIndicator();
 
                 const fileResponses = [
-                    "Got it! File looks good.",
-                    "Received! All clear on my end.",
-                    "Thanks for sending that!",
-                    "File checked and ready!"
+                    "Reçu ! Le fichier a l'air bon.",
+                    "Reçu ! Tout est clair de mon côté.",
+                    "Merci d'avoir envoyé ça !",
+                    "Fichier vérifié et prêt !"
                 ];
 
                 setTimeout(() => {
@@ -919,16 +919,16 @@
             }
 
             async scanFile(file) {
-                // Show scanning message (UNCHANGED)
+                // Show scanning message
                 const scanningDiv = document.createElement('div');
                 scanningDiv.innerHTML = `
         <div class="security-alert">
             <div class="security-alert-header">
                 <span class="loading"></span>
-                Scanning file...
+                Analyse du fichier en cours...
             </div>
             <div class="security-alert-body">
-                Analyzing file with custom security engine...
+                Analyse avec le moteur de sécurité personnalisé...
             </div>
         </div>
     `;
@@ -936,17 +936,17 @@
                 this.scrollToBottom();
 
                 try {
-                    // ⏳ Small delay to simulate scan time (UX consistency)
+                    // Small delay to simulate scan time
                     await this.delay(1200);
 
-                    // 🔍 CUSTOM FILE ANALYSIS
+                    // CUSTOM FILE ANALYSIS
                     const result = SecurityEngine.analyzeFile(file);
 
                     // Remove scanning message
                     scanningDiv.remove();
 
                     if (result.dangerous) {
-                        // ❌ FILE BLOCKED
+                        // FILE BLOCKED
                         this.addSecurityAlert({
                             resource: file.name,
                             positives: 1,
@@ -954,37 +954,37 @@
                             reason: result.reason
                         });
 
-                        this.showToast(`File blocked: ${result.reason}`, 'danger');
+                        this.showToast(`Fichier bloqué : ${result.reason}`, 'danger');
                         return;
                     }
 
-                    // ✅ FILE SAFE
+                    // FILE SAFE
                     this.addSecurityAlert({
                         resource: file.name,
                         positives: 0,
                         total: 1,
-                        reason: 'No threats detected'
+                        reason: 'Aucune menace détectée'
                     });
 
                 } catch (error) {
                     scanningDiv.remove();
-                    this.showToast('File scan failed.', 'danger');
-                    console.error('Scan error:', error);
+                    this.showToast('Échec de l\'analyse du fichier.', 'danger');
+                    console.error('Erreur d\'analyse:', error);
                 }
             }
 
 
             async scanUrl(url) {
-                // Show scanning message (UNCHANGED)
+                // Show scanning message
                 const scanningDiv = document.createElement('div');
                 scanningDiv.innerHTML = `
         <div class="security-alert">
             <div class="security-alert-header">
                 <span class="loading"></span>
-                Scanning link...
+                Analyse du lien en cours...
             </div>
             <div class="security-alert-body">
-                Analyzing URL with custom security engine...
+                Analyse de l'URL avec le moteur de sécurité personnalisé...
             </div>
         </div>
     `;
@@ -992,17 +992,17 @@
                 this.scrollToBottom();
 
                 try {
-                    // ⏳ Small delay for UX consistency
+                    // Small delay for UX consistency
                     await this.delay(1000);
 
-                    // 🔍 CUSTOM URL ANALYSIS
+                    // CUSTOM URL ANALYSIS
                     const result = SecurityEngine.analyzeLink(url);
 
                     // Remove scanning message
                     scanningDiv.remove();
 
                     if (result.dangerous) {
-                        // ❌ LINK BLOCKED
+                        // LINK BLOCKED
                         this.addSecurityAlert({
                             resource: url,
                             positives: 1,
@@ -1010,22 +1010,22 @@
                             reason: result.reason
                         });
 
-                        this.showToast(`Dangerous link blocked: ${result.reason}`, 'danger');
+                        this.showToast(`Lien dangereux bloqué : ${result.reason}`, 'danger');
                         return;
                     }
 
-                    // ✅ LINK SAFE
+                    // LINK SAFE
                     this.addSecurityAlert({
                         resource: url,
                         positives: 0,
                         total: 1,
-                        reason: 'No threats detected'
+                        reason: 'Aucune menace détectée'
                     });
 
                 } catch (error) {
                     scanningDiv.remove();
-                    this.showToast('Link scan failed.', 'danger');
-                    console.error('URL scan error:', error);
+                    this.showToast('Échec de l\'analyse du lien.', 'danger');
+                    console.error('Erreur d\'analyse de l\'URL:', error);
                 }
             }
 
@@ -1057,9 +1057,9 @@
             }
 
             formatFileSize(bytes) {
-                if (bytes === 0) return '0 Bytes';
+                if (bytes === 0) return '0 Octets';
                 const k = 1024;
-                const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+                const sizes = ['Octets', 'Ko', 'Mo', 'Go'];
                 const i = Math.floor(Math.log(bytes) / Math.log(k));
                 return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
             }
